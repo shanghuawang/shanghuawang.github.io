@@ -19,10 +19,9 @@
       <h3>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
 
-<p>SMR Simulator (SMRSim) is a software tool and simulation on host managed SMR storage drive which enforces the core ZAC/ZBC rules defined by the INCITS technical T10/T13 committees.</p>
+<p>SMR Simulator (SMRSim) is a software tool that simulates host managed SMR storage drive which enforces the core ZAC/ZBC rules defined by the INCITS technical T10/T13 committees.</p>
 
-<p>By releasing the SMR simulator, we hope to enable open source developers experiment and become familiar with SMR functionality and behaviors without the need to access a real SMR (ZBC/ZAC) hardware.
- SMR simulator keeps statistics on number of rule violations in each zone. When the SMR storage is mounted to a standard file system (not SMR aware) to obtain write through rule violation statistics over the whole capacity are valuable in estimating the overall conditions. Usage status over the SMR zone are observable to both user applications and file systems. Getting violation counts will help file system and application developers identify what needs to be done to make their SW SMR-friendly.</p>
+<p>SMR Simulator enables open source developers to experiment and become familiar with SMR functionality and behaviors without the need to access a real SMR (ZBC/ZAC) hardware. SMR simulator keeps statistics on rule violations in each zone. This tool simulates mounting a SMR storage device to a standard file system (not SMR aware) to obtain write through rule violation statistics over the whole capacity. Statistics over the SMR zone are observable to both user applications and file systems. Violation counts will help file system and application developers identify what needs to be done to make their SW SMR-friendly.</p>
 
 <h3>
 <a id="default-behavior-expectations" class="anchor" href="#default-behavior-expectations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default Behavior Expectations</h3>
@@ -37,24 +36,23 @@ Rules for out of policy write:
 <h3>
 <a id="behavior-benchmark-and-extension" class="anchor" href="#behavior-benchmark-and-extension" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behavior Benchmark and Extension</h3>
 
-<p>The default expectations on SMR zone access behaviors are soon challenged when mounting the simulator volume to a standard file system and passing through read/write operations. How far these operations can go and how many violations happens in each zone can not be obtained as the earlier rule violation will discontinue any further operation. As a software simulation, new options can always be added to measure the relevant data in order to progressively produce better solutions.</p>
+<p>The default expectations on SMR zone access behaviors are soon challenged when mounting the simulator volume to a standard file system (example: EXT4) and passing through read/write operations. By the default operations, the earlier rule violation will discontinue any further operation. Thus the overall status and statistics on how far these operations go and  how many violations happen in each zone can not be obtained. As a software simulation, new options can always be added to measure the relevant data in order to progressively produce better solutions. </p>
 
-<p>With behavior measuring extensions, SMRSim is capable of being configured to do full pass-through read/write over the entire storage volume without failure but recording all rule violations and zone status. With such option, the error statistics and usage status in each zone can be reviewed and assessed. The view across all zones give a clear picture of where to focus on to solve issues. For example, if the most of the "write not at write-pointer" errors are happening near the beginning of the zones then we can configure these zones as the CMR zones. This will resolve the write errors without breaking the SMR standard.</p>
+<p>Using behavior measuring extensions, SMRSim can be configured to do full pass-through read/write over the entire storage volume without failure but recording all rule violations and zone status. With such option, the error statistics and usage status in each zone can be reviewed and assessed. The view across all zones gives a clear picture of where to focus on how to solve issues. For example, if the most of the "write not at write-pointer" errors are occuring near the beginning of the zones then we can configure these zones as the CMR zones. This will resolve the write errors without breaking the SMR standard.</p>
 
-<p>With the “SMR Zone Across” option, if the incoming data size is bigger than a zone size when the contiguous zones are empty then it can be split up to fit into two zones without violating the rules.</p>
+<p>Using the “SMR Zone Across” option, if the incoming data size is bigger than a zone size when the contiguous zones are empty then it can be split up to fit into two zones without violating the rules.</p>
 
 <h3>
 <a id="simplified-error-feedback-path" class="anchor" href="#simplified-error-feedback-path" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simplified Error Feedback Path</h3>
 
 <p>Error handling has always been a complex issue. According to the standard, error codes will need go through sense code mechanisms like what SCSI error propagation does. The distribution of the error retrieval mechanism to the user application or file systems is a non-trivial task.</p>
 
-<p>SMRSim is built on top of the Linux Kernel Device Mapper framework. The potential extension on the 
-framework will allow the plug-in module to propagate the error code back to the upper layer. Therefore, there are opportunities for the plug-in module to be a translation point and "return" the appropriate error to the user. </p>
+<p>SMRSim is built on top of the Linux Kernel Device Mapper framework. The potential extension on the framework will allow the plug-in module to propagate the error code back to the upper layer. Therefore, there are opportunities for the plug-in module to be a translation point and "return" the appropriate error to the user.</p>
 
 <h3>
 <a id="host-managed-smr-device-mapper" class="anchor" href="#host-managed-smr-device-mapper" aria-hidden="true"><span class="octicon octicon-link"></span></a>Host Managed SMR Device Mapper</h3>
 
-<p>SMRSim provides the basic functionality and configuration options to support an I/O indirection layer built on top of the device mapper framework to handle the host managed tasks. As a supporting tool, it enables  Host Managed SMR Device Mapper (SMR-DM) to address more area yet need to be discovered from the real HW limitations. SMR-DM is designed to wrap up the bare metal drive which has simplified SMR firmware and leave the flexibility and sensibility out of the box. To simplify the error feedback path, the device mapper plugin layer can translate the "sense codes" into functional errors and return this to the user. For more introduction details, refer to article [1].</p>
+<p>SMRSim provides the basic functionality and configuration options to support an I/O indirection layer built on top of the device mapper framework to handle the host managed tasks. As a supporting tool, it enables Host Managed SMR Device Mapper (SMR-DM) to address more area yet need to be discovered from the real HW limitations [1].</p>
 
 <h3>
 <a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
